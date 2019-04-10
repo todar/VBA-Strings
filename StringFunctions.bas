@@ -18,8 +18,34 @@ Option Private Module
 ' - StringProperLength
 
 'NOTES:
-
 'TODO:
+
+'EXAMPLES OF ALL THE FUNCTIONS
+Private Sub StringFunctionExamples()
+    
+    '@AUTHOR: ROBERT TODAR
+    
+    StringSimilarity "Test", "Tester"        '->  66.6666666666667
+    LevenshteinDistance "Test", "Tester"     '->  2
+    StringInterpolation "${0}\n\t${1}", "First", "Tab and Second" '-> First
+                                                                  '->   Tab and Second
+                                                                  
+    Truncate "This is a long sentence", 10                '-> "This is..."
+    StringBetween "Robert Paul Todar", "Robert", "Todar"  '-> "Paul"
+    StringProperLength "1001", 6, "0", True               '-> "100100"
+    
+    
+    'Inject() is a copy of StringInterpolation, this alias is easier to remember (shorter too!)
+    'Here is an example using a dictionary!
+    Dim Person As New Scripting.Dictionary
+    Person("Name") = "Robert"
+    Person("Age") = 30
+    
+    'REMEMBER, DICTIONARY KEYS ARE CASE SENSITIVE!
+    Debug.Print Inject("Hello,\nMy name is ${Name} and I am ${Age}!", Person)
+        '-> Hello,
+        '-> My name is Robert and I am 30!
+End Sub
 
 '******************************************************************************************
 ' PUBLIC FUNCTIONS
@@ -172,8 +198,55 @@ Public Function Inject(ByRef Source As String, ParamArray Args() As Variant) As 
     '@REQUIRED: REFERENCE TO MICROSOFT SCRIPTING RUNTIME (SCRIPTING.DICTIONARY)
     '@EXAMPLE: Inject("${0}\n\t${1}", "First Line", "Tab and Second Line")
         
-    StringInterpolation Source, Args
-    Si = Source
+    Dim RegEx As Object
+    Set RegEx = CreateObject("VBScript.RegExp")
+    With RegEx
+        .Global = True
+        .Pattern = "((?:^|[^\\])(?:\\{2})*)(?:\\n)+"
+        Source = .Replace(Source, "$1" & vbNewLine)
+        Source = .Replace(Source, "$1" & vbNewLine)
+        .Pattern = "((?:^|[^\\])(?:\\{2})*)(?:\\t)+"
+        Source = RegEx.Replace(Source, "$1" & vbTab)
+        Source = RegEx.Replace(Source, "$1" & vbTab)
+    End With
+    
+    'REPLACE ${#} WITH VALUES STORED IN VARIABLE.
+    Dim Index As Integer
+    Select Case True
+    
+        Case IsMissing(Args)
+    
+        Case TypeName(Args(0)) = "Dictionary":
+            
+            Dim Dict As Scripting.Dictionary
+            Set Dict = Args(0)
+            For Index = 0 To Dict.Count - 1
+                Source = Replace(Source, "${" & Dict.Keys(Index) & "}", Dict.items(Index), , , vbTextCompare)
+            Next Index
+            
+        Case TypeName(Args(0)) = "Collection":
+            Dim Col As Collection
+            Set Col = Args(0)
+            For Index = 1 To Col.Count
+                Source = Replace(Source, "${" & Index - 1 & "}", Col(Index), , , vbTextCompare)
+            Next Index
+            
+        Case Else:
+        
+            Dim Arr As Variant
+            If IsArray(Args(0)) Then
+                Arr = Args(0)
+            Else
+                Arr = Args
+            End If
+            
+            For Index = LBound(Arr, 1) To UBound(Arr, 1)
+                Source = Replace(Source, "${" & Index & "}", Arr(Index), , , vbTextCompare)
+            Next Index
+            
+    End Select
+    
+    Inject = Source
 
 End Function
 
