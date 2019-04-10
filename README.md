@@ -14,7 +14,7 @@ A whole bunch of String functions to make it easier and faster coding.
 Import StringFunctions.bas file.
 Set Reference to MicroSoft Scripting Runtime (for using Scripting.Dictionary)
 
-Below are some of the examples you can do with single dim arrays. Note, there are several functions for two dim arrays as well.
+Below are examples of how to use the functions.
 
 ```vb
 Private Sub StringFunctionExamples()
