@@ -1,5 +1,5 @@
 # VBA String Functions
-A library of String functions to make life friendlier!
+A library of String functions to make life easier! =)
 
 ## References
 | Reference                                  | Object               |
@@ -7,7 +7,7 @@ A library of String functions to make life friendlier!
 | Microsoft Scripting Runtime                | Scripting.Dictionary |
 | Microsoft VBScript Regular Expressions 5.5 | RegExp, Match        |
 
-## Public Funtions:
+## Public Funtions
 
 | Function            | Description                                                                              |
 | ------------------- | ---------------------------------------------------------------------------------------- |
@@ -19,14 +19,14 @@ A library of String functions to make life friendlier!
 | StringPadding       | Returns a string with the proper padding on either side.                                 |
 | ToString            | Reads any value or object in VBA and returns it in string formatting.                    |
 
----
-
 ## Example Usage
 
 ```vb
 '/**
 ' * Examples of various functions.
+' *
 ' * @author Robert Todar <robert@robertodar.com>
+' * @licence MIT
 ' */
 Private Sub testsForStringFunctions()
     Debug.Print StringSimilarity("Test", "Tester")                     '~>  66.6666666666667
